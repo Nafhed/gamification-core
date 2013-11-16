@@ -33,6 +33,7 @@ echo "<option value='100'>100</option>";
 echo "</select> <input type='submit' value='Get Experience'/></p></form>";
 if(isset($_POST["exp_user"]))
 {
+echo print_r($_POST, true);
 	$level = $g->add_experience($_POST["exp_user"], $_POST["exp_amount"]);
 	$info = $g->get_user($_POST["exp_user"]);
 	echo "<fieldset><legend>Info about ".$info["username"]."</legend>";
@@ -40,6 +41,7 @@ if(isset($_POST["exp_user"]))
 	echo "<p>Experience: ".$info["experience"]."</p>";
 	echo "<p>Level: ".$info["level"]."</p>";
 	echo "<p>Achievements: <ul>";
+
 	foreach($info["achievements"] as $val)
 	{
 		if($val["status"] == "completed")

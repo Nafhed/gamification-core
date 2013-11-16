@@ -4,9 +4,7 @@ jQuery(document).ready(function($) {
 	loginBox.hide();
 
 	function openLogin() {
-
 		loginBox.fadeIn(600);
-
 	}
 
 	$('#openLogin').click(openLogin);

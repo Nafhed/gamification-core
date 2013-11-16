@@ -11,8 +11,11 @@
  * For more information, examples and online documentation visit:  
  * http://webcodingeasy.com/PHP-classes/Implement-game-logic-to-your-web-application
 **************************************************************/
-include("./gamify.php");
-$g = new gamify("localhost", "root", "password", "gamify");
+//include("header.php");
+include("./gamify/gamify.php");
+$g = new gamify("localhost", "root", "root", "gamify");
+
+
 $g->debug();
 if(isset($_GET["sort"]))
 {
@@ -29,9 +32,11 @@ else
 {
 	$users = $g->get_users();
 }
-echo "<table border='0' cellpadding='5' cellspacing='5'>";
+
+//echo print_r($users, true);
+echo "<table id='leaderboard' border='0' cellpadding='5' cellspacing='5'>";
 echo "<tr><th>";
-if(isset($_GET["sort"]) && $_GET["sort"] == "username" && !isset($_GET["desc"]))
+if(isset($_GET["sort"]) && $_GET["sort"] == "playername" && !isset($_GET["desc"]))
 {
 	echo "<a href='?sort=username&desc=true'>username</a>";
 }
@@ -48,44 +53,49 @@ else
 {
 	echo "<a href='?sort=experience'>experience</a>";
 }
-echo "</th><th>level</th><th>options</th></tr>";
+//echo "</th><th>level</th><th>options</th></tr>";
 foreach($users as $user)
 {
-	echo "<tr>";
-	echo "<td>".$user["username"]."</td>";
-	echo "<td>".$user["experience"]."</td>";
-	echo "<td>".$user["level"]."</td>";
-	echo "<td><form method='post'>";
-	if(isset($_POST["id"]) && $_POST["id"] == $user["username"])
-	{
-		echo "<input type='submit' value='Hide info'/>";
-	}
-	else
-	{
-		echo "<input type='hidden' name='id' value='".$user["username"]."'/><input type='submit' value='Show info'/>";
-	}
-	echo "</form></td>";
-	echo "</tr>";
-	if(isset($_POST["id"]) && $_POST["id"] == $user["username"])
-	{
-		echo "<tr><td colspan='4'>";
-		$info = $g->get_user($_POST["id"]);
-		echo "<fieldset><legend>Info about ".$info["username"]."</legend>";
+	echo "<td id=".$user['ID'].">";
+	echo "<tr class='user-details'>";
+	echo "<td class='username'>".$user["playername"]."</td>";
+	echo "<td class='experience'>".$user["experience"]."</td>";
+	echo "<td class='level'>".$user["level"]."</td>";
+	//echo "<td><form method='post'>";
+
+	//if(isset($_POST["id"]) && $_POST["id"] == $user["playername"])
+	//{
+		//echo "<input type='submit' value='Hide info'/>";
+	//}
+	//else
+	//{
+		//echo "<input type='hidden' name='id' value='".$user["playername"]."'/><input type='submit' value='Show info'/>";
+	//}
+	//echo "</form></td>";
+	//echo "</tr>";
+
+	//if(isset($_POST["id"]) && $_POST["id"] == $user["playername"])
+	//{
+		echo "<td class='user-info' colspan='4'>";
+		$info = $g->get_user($user["playername"]);
+		//echo print_r($info, true);
+		echo "<span>Info about ".$info["username"]."</span>";
 		echo "<p>Username: ".$info["username"]."</p>";
 		echo "<p>Experience: ".$info["experience"]."</p>";
 		echo "<p>Level: ".$info["level"]."</p>";
 		echo "<p>Achievements: <ul>";
-		foreach($info["achievements"] as $val)
-		{
-			if($val["status"] == "completed")
+			foreach($info["achievements"] as $val)
 			{
-				echo "<li>".$val["achievement_name"]."<br/>Badge: <img src='".$val["badge_src"]."' width='50px' border='0'/><br/>Earned : ".date("r", $val["time"])."</li>";
+				if($val["status"] == "completed")
+				{
+					echo "<li>".$val["achievement_name"]."<br/>Badge: <img src='".$val["badge_src"]."' width='50px' border='0'/><br/>Earned : ".date("r", $val["time"])."</li>";
+				}
 			}
-		}
 		echo "</ul></p>";
-		echo "</fieldset>";
-		echo "</td></tr>";
-	}
+		echo "</td></tr></td>";
+	//}
 }
 echo "</table>";
+
+//include('footer.html');
 ?>

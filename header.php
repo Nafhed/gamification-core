@@ -21,6 +21,7 @@ session_start();
 		exit;
 	}
 
+	//load gamify class library into application
 	include("./gamify/gamify.php");
 	$g = new gamify("localhost", "root", "root", "gamify");
 
@@ -47,7 +48,7 @@ session_start();
 
 	<title> The Core || <?php echo $title; ?></title>
 
-	<meta name="title" content="Gamification ||  " <?php echo $title; ?> >
+	<meta name="title" content="Gamification || <?php echo $title; ?> ">
 
 	<meta name="description" content="Gamification Website" />
 	<!--Google will often use this as its description of your page/site. Make it good.-->
@@ -60,14 +61,16 @@ session_start();
 	<link rel="apple-touch-icon" href="favicon.png" />
 
 	<!-- stylesheets -->
-	<link rel="stylesheet" href="css/reset.css" />
-	<link rel="stylesheet" href="css/style.css" />
+	<link rel="stylesheet" href="/DMP/Core/css/reset.css" />
+	<link rel="stylesheet" href="/DMP/Core/css/style.css" />
 
-	<!-- JavaScript -->
-	<script type='text/javascript' src='js/jquery.min.js'></script>
-	<script type='text/javascript' src='//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
+	<!-- jQuery Load -->
+	<script type='text/javascript' src='/DMP/Core/js/jquery.min.js'></script>
+	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
 	
-	<script type='text/javascript' src='js/script.js'></script>
+	<!-- JavaScript -->
+	<script type='text/javascript' src='/DMP/Core/js/script.js'></script>
+	<script type='text/javascript' src='/DMP/Core/js/leaderboard_update.js'></script>
 
 	<!-- This is an un-minified, complete version of Modernizr. 
 		 Before you move to production, you should generate a custom build that only has the detects you need.

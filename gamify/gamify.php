@@ -203,7 +203,12 @@ class gamify
 	public function get_user($username){
 		try{
 			//$query = $this->con->prepare("SELECT a.ID, a.username, a.experience, b.level_name as level FROM `".($this->pref)."user_stats` as a,`".($this->pref)."levels` as b WHERE a.level = b.ID and `username` = ?");
-			$query = $this->con->prepare("SELECT player.username, player.userID, player_stats.experience, level.level_name as level FROM `".($this->pref)."users` as player,`".($this->pref)."user_stats` as player_stats,`".($this->pref)."levels` as level WHERE player_stats.level = level.ID and player.username = ?");
+			//$query = $this->con->prepare("SELECT player.username, player.userID, player_stats.experience, level.level_name as level FROM `".($this->pref)."users` as player,`".($this->pref)."user_stats` as player_stats,`".($this->pref)."levels` as level WHERE player_stats.level = level.ID and player.username = ?");
+			
+			//improved query to use join levels and stats	
+			$query = $this->con->prepare("SELECT player.username, player.userID, player_stats.experience, player_stats.level, levels.level_name FROM `".($this->pref)."users` as player INNER JOIN `".($this->pref)."user_stats` as player_stats ON player.userID = player_stats.userID 
+											INNER JOIN `".($this->pref)."levels` as levels ON player_stats.level = levels.ID WHERE player.username = ?");
+
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			$query->execute(array($username));
 			if($result = $query->fetch())
@@ -530,6 +535,60 @@ class gamify
 	}
 	
 	/**************************
+	* POST DIRECTORY
+	**************************/
+	public function get_posts() {
+		try{
+			//get post details from database
+			$query = $this->con->prepare("SELECT post_id, post_slug, post_title, post_content, post_date FROM `".($this->pref)."posts` ORDER BY post_id DESC");
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			//$query->execute(array($id));
+			$query->execute();
+			if($posts = $query->fetchAll()) {
+				$query->closeCursor;
+				return $posts;
+			}
+			else 
+			{
+				//throw an error
+				$this->err[] = 'Error post unavailable';
+			}
+		}
+		catch(PDOException $e) {
+			$this->err[] = 'Error'.$e->getMessage();
+		}
+	}
+
+	public function view_post($slug) {
+		try {
+			$query = $this->con->prepare("SELECT post_id, post_title, post_content, post_date FROM `".($this->pref)."posts` WHERE `post_slug` = ?");
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			$query->execute(array($slug));
+			//$row = $query->fetch();
+			//echo 'post array - ' . print_r($row, true);
+			//$query->execute(array($id));
+			//$query->closeCursor;
+
+			if($result = $query->fetch()) {
+				
+				$query->closeCursor;
+				//$query = $this->con->prepare("SELECT post_id, post_title, post_content, post_date FROM `".($this->pref)."posts` WHERE `post_slug` = ?");
+				//$query->execute(array($result['post_id']));
+				//echo print_r($result, true);
+				return $result;
+				
+			}
+			else 
+			{
+				//throw an error
+				$this->err[] = 'There are no posts';
+			}
+		}
+		catch(PDOException $e) {
+			$this->error= 'Error no posts'.$e->getMessage();
+		}
+	}
+	/**************************
 	* USER INTERACTION
 	**************************/
 	//add experience to user
@@ -554,8 +613,9 @@ class gamify
 					$query->closeCursor();
 					//update experience and level info
 
-					$query = $this->con->prepare("UPDATE `".($this->pref)."user_stats` SET `experience` = ?, `level` = ? WHERE `ID` = ?");
-					$query->execute(array($exp, $level["ID"], $row["ID"]));
+					// ID to userID
+					$query = $this->con->prepare("UPDATE `".($this->pref)."user_stats` SET `experience` = ?, `level` = ? WHERE `userID` = ?");
+					$query->execute(array($exp, $level["ID"], $row["userID"]));
 					$query->closeCursor();
 					return $level;
 				}
@@ -563,8 +623,10 @@ class gamify
 				{
 					$query->closeCursor();
 					//update experience info
-					$query = $this->con->prepare("UPDATE `".($this->pref)."user_stats` SET `experience` = ? WHERE `ID` = ?");
-					$query->execute(array($exp, $row["ID"]));
+
+					// ID to userID
+					$query = $this->con->prepare("UPDATE `".($this->pref)."user_stats` SET `experience` = ? WHERE `userID` = ?");
+					$query->execute(array($exp, $row["userID"]));
 					$query->closeCursor();
 				}
 			}
