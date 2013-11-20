@@ -185,8 +185,8 @@ class gamify
 				$query->setFetchMode(PDO::FETCH_ASSOC);
 
 				//check below code (could be wrong / not working as intended)
-				$query->execute(array($player["userID"]));
-				$player["userID"] = $query->fetch();
+				$query->execute();
+				//$player["userID"] = $query->fetch();
 				$query->closeCursor();
 				return $player;
 			}
@@ -561,7 +561,7 @@ class gamify
 
 	public function view_post($slug) {
 		try {
-			$query = $this->con->prepare("SELECT post_id, post_title, post_content, post_date FROM `".($this->pref)."posts` WHERE `post_slug` = ?");
+			$query = $this->con->prepare("SELECT post_id, post_title, post_content, post_date, post_experience FROM `".($this->pref)."posts` WHERE `post_slug` = ?");
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			$query->execute(array($slug));
 			//$row = $query->fetch();
@@ -582,6 +582,65 @@ class gamify
 			{
 				//throw an error
 				$this->err[] = 'There are no posts';
+			}
+		}
+		catch(PDOException $e) {
+			$this->error= 'Error no posts'.$e->getMessage();
+		}
+	}
+
+	public function post_category($post_id) {
+		try {
+			$query = $this->con->prepare("SELECT post_category.category_id, category_name FROM `".($this->pref)."posts_category` as post_category, `".($this->pref)."posts_directory` as post_directory WHERE post_category.category_id = post_directory.category_id AND post_directory.post_id = ? ");
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			$query->execute(array($post_id));
+
+			if($categories = $query->fetchAll()) {
+				$query->closeCursor();
+				return $categories;
+			}
+			else 
+			{
+			//throw an error
+			$this->err[] = 'There are no posts';
+			}
+		}
+		catch(PDOException $e) {
+			$this->error= 'Error no posts'.$e->getMessage();
+		}
+	}
+
+	public function get_category($cat_slug) {
+		$query = $this->con->prepare("SELECT category_id, category_name, category_slug FROM `".($this->pref)."posts_category` WHERE category_slug = ?");
+		$query->setFetchMode(PDO::FETCH_ASSOC);
+		$query->execute(array($cat_slug));
+
+		if($category = $query->fetch()) {
+			$query->closeCursor();
+			return $category;
+		}
+	}
+
+	public function get_categories() {
+		$query = $this->con->prepare("SELECT * FROM `".($this->pref)."posts_category`");
+		$query->setFetchMode(PDO::FETCH_ASSOC);
+		$query->execute();
+
+		if($category = $query->fetchAll()) {
+			$query->closeCursor();
+			return $category;
+		}
+	}
+
+	public function category_posts($cat) {
+		try {
+			$query = $this->con->prepare("SELECT post.post_id, post.post_title, post.post_slug, post.post_content, post.post_date FROM `".($this->pref)."posts` as post, `".($this->pref)."posts_directory` as post_directory WHERE post.post_id = post_directory.post_id AND post_directory.category_id = ? ORDER BY post.post_id DESC");
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			$query->execute(array($cat));
+
+			if($result = $query->fetchAll()) {
+				$query->closeCursor;
+				return $result;
 			}
 		}
 		catch(PDOException $e) {

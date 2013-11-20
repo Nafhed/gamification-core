@@ -84,11 +84,16 @@ if(empty($_SESSION['player_name'])) {
 
 if(!empty($_SESSION['player_name'])) {
 //logged in
-	
+
+//get user level
+$playerDetails = $g->get_user($player_name);
+
 ?>
 
 <section id="playerActive" class="player">
-	<p> Welcome, <a href="profile.php?user=<?php echo $player_name; ?>"><?php echo $player_name; ?></a> </p>
+	<p> Welcome, <a href="user/<?php echo $player_name; ?>"><?php echo $player_name; ?></a> </p>
+	<span class="user_experience"> You have <?php echo $playerDetails['experience']; ?> experience. </span>
+	<span class="user_level"> Level <?php echo $playerDetails['level']; ?> </span>
 	<a href="?op=logout">Log out</a>
 </section>
 

@@ -9,8 +9,8 @@ session_set_cookie_params(2*7*24*60*60);
 session_start();
 
 
-//echo print_r($_POST, true);
-
+// Define base url
+define('BASE_URL', '/DMP/Core/');
 
 
 
@@ -61,16 +61,16 @@ session_start();
 	<link rel="apple-touch-icon" href="favicon.png" />
 
 	<!-- stylesheets -->
-	<link rel="stylesheet" href="/DMP/Core/css/reset.css" />
-	<link rel="stylesheet" href="/DMP/Core/css/style.css" />
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>css/reset.css" />
+	<link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css" />
 
 	<!-- jQuery Load -->
-	<script type='text/javascript' src='/DMP/Core/js/jquery.min.js'></script>
+	<script type='text/javascript' src='<?php echo BASE_URL; ?>js/jquery.min.js'></script>
 	<script type='text/javascript' src='http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js'></script>
 	
 	<!-- JavaScript -->
-	<script type='text/javascript' src='/DMP/Core/js/script.js'></script>
-	<script type='text/javascript' src='/DMP/Core/js/leaderboard_update.js'></script>
+	<script type='text/javascript' src='<?php echo BASE_URL; ?>js/script.js'></script>
+	<script type='text/javascript' src='<?php echo BASE_URL; ?>js/leaderboard_update.js'></script>
 
 	<!-- This is an un-minified, complete version of Modernizr. 
 		 Before you move to production, you should generate a custom build that only has the detects you need.
@@ -84,11 +84,11 @@ session_start();
 	<?php require_once('login_form.php'); ?>
 	
 	<hgroup>
-		<h1> <a href="index.php">Core</a> </h1>
+		<h1> <a href="<?php echo BASE_URL; ?>">Core</a> </h1>
 		<h6> Work hard. Play hard. </h6>
 	</hgroup>
 
-	<?php include('navigation.html'); ?>
+	<?php include('navigation.php'); ?>
 
 	
 </header>
