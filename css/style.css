@@ -14,29 +14,29 @@
 
 /* A Linux- and Windows-friendly sans-serif font stack: http://prospects.mhurrell.co.uk/post/updating-the-helvetica-font-stack */
 html, body { }
-body {font: 14px Helmet, Freesans, sans-serif;}
+body {font: 14px Helvetica, Arial, sans-serif;}
 
 /* Using local fonts? Check out Font Squirrel's webfont generator: http://www.fontsquirrel.com/tools/webfont-generator */
 
 /* We like off-black for text. */
 body, select, input, textarea {color: #333; line-height: 1.2em;}
 
-a { color: #03f; }
-a:hover { color: #69f; }
+a { color: #e8e8e8; }
+a:hover { color: #46a1ff; }
 
 a { text-decoration: none; }
 
 h1 { 
 	font-size: 3.8em; 
-	line-height: 1.85em;
+	line-height: 1.6em;
 }
 h2 { 
 	font-size: 3.2em;
-	line-height: 1.7em;
+	line-height: 1.5em;
 }
 h3 { 
 	font-size: 2.8em;
-	line-height: 1.6em;
+	line-height: 1.45em;
 }
 h4 { 
 	font-size: 2.5em;
@@ -53,6 +53,11 @@ h6 {
 
 p {
 	margin: 1em 0;
+}
+
+ul li {
+	list-style: none;
+	list-style-type: none;
 }
 
 table {
@@ -82,15 +87,24 @@ textarea:-moz-placeholder { color: #a9a9a9; }
 
 #main { padding-top: 0.5em; overflow: hidden; }
 
-hgroup, #header h1, #header div.description { display: inline-block; }
+hgroup, 
+#header h1, 
+#header div.description { 
+	display: inline-block;
+	width: 100%;
+}
 
-#header h1 { 
-	color: #EFEEE9; 
-	margin: 0 auto; 
+#header h1, #header h1 a { 
+	font-family: Times New Roman, serif;
+	font-size: 2.6em;
+	font-weight: normal;
+	color: #272727; 
+	margin: 0 auto;
+	text-transform: uppercase;
+	text-align: center;
 }
 
 #header div.description { text-indent: 5px; color: #e8e8e8; }
-#header a { color: #FFF; }
 
 .post {}
 
@@ -103,46 +117,196 @@ hgroup, #header h1, #header div.description { display: inline-block; }
 
 #sidebar {}
 
+aside#sidebar_menu {
+	float: left;
+	width: 16%;
+	padding: 5px 8px;
+}
+
 #header {
-	background: #90170E;
-	padding: 10px; 
+	position:;
+	/*padding: 10px;*/
 	width: 100%;
 }
 
+a.button {
+	padding: 5px 8px;
+	background: #222;
+}
+
+/* --- Navigation styling --- */
 #nav, .navigation { 
-	padding: 5px 0;
-	margin: 0 auto;
-	display: inline-block; 
-}
-
-#nav ul.menu {
-
-}
-
-#nav ul.menu li {
+	padding: 18px 0;
+	color: #fff;
 	display: inline-block;
-	padding: 5px 10px;
+	width: 100%;
 }
 
-#nav ul.menu li ul.sub-menu {
-	display: none;
+	#nav ul.menu {
+		text-align: center;
+	}
+
+		#nav ul.menu li {
+			display: inline-block;
+			padding: 5px 10px;
+		}
+			#nav ul.menu li a {
+				color: #222;
+			}
+
+				#nav ul.menu li ul.sub-menu {
+					display: none;
+				}
+
+aside#sidebar_menu {
+
 }
+
+	aside#sidebar_menu ul {
+
+	}
+
+		aside#sidebar_menu ul#category-navigation li {
+			list-style: none;
+			list-style-type: none;
+			color: #e8e8e8;
+			padding: 5px 8px;
+			margin: 2px 0;
+			background: #424242;
+			text-align: right;
+		}
 
 /* --- Header styling --- */
-#header h1 {
-	font-size: 2em;
+span#logo {
+	position: relative;
+	width: 40px;
+	height: 100px;
+	right: 40px;
+	top: -15px;
+	display: inline-block;
+}
+	span#logo img {
+		vertical-align: middle;
+	}
+
+#header hgroup h6 {
+	text-align: center;
 }
 
 	/* --- Player status styling --- */
-	#playerActive {
-		float: right;
-		width: 320px;
+	#playerActive,
+	#playerNotActive {
+		font-family: Times New Roman, serif;
+		width: 100%;
 	}
+
+	#playerActive {
+		background: #222;
+		color: #e8e8e8;
+		padding: 3px 20px;
+		text-align: right;
+		margin: 0 0 10px 0;
+	}
+
+	ul#user-links {
+		/*position: absolute;
+		left: 0;
+		top: 35px;
+		background: #222;*/
+		padding: 3px 10px;
+		display: inline-block !important;
+		position: absolute;
+		top: 10px;
+		left: -999px;
+	}
+
+	ul#user-links li {
+		display: inline;
+		margin: 0 10px;
+	}
+
+	#playerNotActive {
+		font-family: Arial, sans-serif;
+	}
+
+	#playerActive span {
+		color: #626262;
+	}
+
+		#playerActive  a#openLogin,
+		#playerNotActive a#openLogin {
+			padding: 5px 8px;
+			background: #222;
+		}
+
+		#playerActive a#player {
+			font-size: 1.2em;
+			line-height: 1.5em;
+		}
+
+			#playerActive div {
+				display: inline-block;
+			}
+
+		#playerActive div.level_bar {
+			margin: 0 10px;
+		}
+
+		#playerActive div.level_bar span.percentage {
+			text-align: center;
+			display: inline-block;
+			width: 100%;
+		}
+
+		#playerActive div.level-bar-fill {
+			display: block; 
+			background: #05B4FF;
+			height: 14px;
+			border-radius: 8px;
+			-moz-border-radius: 8px;
+		}
+
 
 #header #searchform label.screen-reader-text {  /* Remove search text */
 	position: absolute;
 	left: -9999px;
 }
+
+/* --- Content styling --- */
+#content {
+	width: 80%;
+	padding: 0 20px;
+	margin: 0 auto;
+}
+
+#post-directory {
+	width: 80%;
+	display: inline-block;
+	margin: 0 0 0 40px;
+}
+
+#player-achievement {
+	width: 480px;
+}
+
+	#player-achievement img.achievement-badge {
+		display: block;
+		margin: 10px auto;
+	}
+
+		#player-achievement span {
+			display: block;
+		}
+
+/* --- Footer styling --- */
+#footer {
+	text-align: center;
+	padding: 10px 0;
+}
+
+	#footer span {
+		display: block;
+	}
 
 /* --- Form elements --- */
 
@@ -157,15 +321,75 @@ select, input {
 		width: 320px;
 	}
 
-	#userForm form {
-		position: absolute;
-		top: 35%;
-		left: 40%;
-		padding: 10px;
-		border-radius: 3px;
-		background: rgb(31, 31, 31);
-		background: rgba(31, 31, 31, .8);
+		#userForm form {
+			position: absolute;
+			top: 35%;
+			left: 40%;
+			padding: 20px;
+			border-radius: 8px;
+			background: rgb(31, 31, 31);
+			background: rgba(31, 31, 31, .8);
+		}
+
+		#userForm #user-login fieldset {
+			width: 275px;
+			padding: 20px 0;
+		}
+		
+		#userForm #user-login fieldset legend {
+			color: #e8e8e8;
+		}
+
+		form#user-login input[type="submit"],
+		form#user-login a.register {
+			-webkit-appearance: none;
+			-moz-appearance: none;
+			padding: 5px;
+			background: #e8e8e8;
+			color: #222;
+			border: 0;
+			font-size: 0.8em;
+		}
+
+			#userForm form label {
+				color: #e8e8e8;
+				display: inline-block;
+				text-align: right;
+				width: 80px;
+				margin-right: 10px;
+			}
+
+				#userForm form input[type="text"],
+				#userForm form input.password-field {
+					clear: right;
+					width: 150px;
+					margin: 5px 0;
+				}
+
+#registration-form {
+	width: 420px;
+	text-align: center;
+	margin: 0 auto;
+}
+
+	#registration-form label {
+		display: inline-block;
+		text-align: left;
+		float: left;
+		width: 130px;
+		margin: 5px 0;
 	}
+
+		#registration-form input.form-field {
+			width: 50%;
+			margin: 5px auto;
+		}
+
+			#registration-form input[type="submit"] {
+				clear: both;
+				display: block;
+			}
+
 	
 			/* --- Form errors --- */
 			.display_error {
@@ -184,27 +408,50 @@ select, input {
 				font-size: 0.9em;
 				color: #FFF;
 			}
-
-/* --- Leaderboard styling --- */
-
-tr.user-details {
-	position: relative;
-	padding: 8px;
+/* --- Comments --- */
+textarea#comment {
+	display: block;
 }
 
-	tr.user-details:hover {
-		background: #e8e8e8;
+/* --- Leaderboard styling --- */
+#loading,
+#loading img {
+	margin: 0 auto;
+	text-align: center;
+}
+
+#leaderboard-update {
+	margin: 20px auto;
+	width: 620px;
+}
+
+	#leaderboard-update table#leaderboard {
+		width: 90%;
 	}
-	
-		tr.user-details td {
+
+	table#leaderboard th a {
+		text-align: left;
+	}
+
+		table#leaderboard tr.user-details {
+			position: relative;
 			padding: 8px;
 		}
 
-	td.user-info {
-		position: absolute;
-		left: 0;
-		background: #797979;
-	}
+			table#leaderboard tr.user-details:hover {
+				background: #e8e8e8;
+			}
+			
+				table#leaderboard tr.user-details td {
+					padding: 8px;
+				}
+
+			table#leaderboard td.user-info {
+				position: absolute;
+				left: 0;
+				border: 2px solid #797979;
+				background: #FFF;
+			}
 
 /* --- Generic styling --- */
 

@@ -13,7 +13,9 @@
 ?>
 		<div id="main">
 			<div id="content">
-				<article id="post">
+
+			<?php include('category_menu.php'); ?>
+				<article id="post-directory">
 
 					<?php 
 
@@ -31,7 +33,7 @@
 
 					$catPosts = $g->category_posts($cat_id);
 
-					echo print_r($catPosts, true);
+					//echo print_r($catPosts, true);
 
 						foreach($catPosts as $catPost) {
 
@@ -46,7 +48,7 @@
 								echo "<div id='post-entry-".$catPost['post_id']." class='post-entry'>";
 									echo "<h1 class='post-title'><a href=".BASE_URL."post/".$catPost['post_slug'].">" . $catPost['post_title'] . "</a></h1>";
 
-									echo print_r($catPost, true);
+									//echo print_r($catPost, true);
 
 									echo "<span class='post_date'>" . $postDate . "</span>";
 									//echo "<div class='post_category'> Posted in <a href=post/" . $cat['category_slug'] . ">" . $cat['category_name'] . "</a></div>";

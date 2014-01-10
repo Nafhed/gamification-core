@@ -41,7 +41,7 @@ if(isset($_POST['submit'])=='Regsiter') {
 }
 
 
-//if(!$err) {
+if(!$err) {
 	//retrieve our data from POST
 	$username = $_POST['username'];
 	$password1 = $_POST['password1'];
@@ -61,7 +61,7 @@ if(isset($_POST['submit'])=='Regsiter') {
 
 	$register = $g->create_user($username, $password, $email);
 	$registered = true;
-
+}
 
 ?>
 		<div id="main">
@@ -69,7 +69,7 @@ if(isset($_POST['submit'])=='Regsiter') {
 			<div id="content">
 				<article id="post">
 
-					<form name="register" action="" method="post">
+					<form name="register" id="registration-form" class="user-form" action="" method="post">
 						
 						<h2>Registration Form</h2>
 						<label for="username" class="form-label">Username: </label>
@@ -82,7 +82,7 @@ if(isset($_POST['submit'])=='Regsiter') {
 						<input type="password" class="form-field" name="password2" />
 
 						<label for="email" class="form-label">Email: </label>
-						<input type="text" name="email" id="email" />
+						<input type="text" name="email" class="form-field" id="email" />
 							
 						<input type="submit" name="submit" value="Register" />
 					</form>
@@ -92,7 +92,7 @@ if(isset($_POST['submit'])=='Regsiter') {
 					
 
 						//echo print_r($_GET);
-						echo 'post - ' . print_r($_POST, true);
+						//echo 'post - ' . print_r($_POST, true);
 						//echo print_r($_SESSION);
 
 						//echo $_GET['thanks'];
@@ -102,13 +102,14 @@ if(isset($_POST['submit'])=='Regsiter') {
 					
 					//echo 'Thanks for regsitering';
 
-					echo 'register - ' . print_r($register, true);
+					//echo 'register - ' . print_r($register, true);
 					//echo print_r($_POST);
 
 					?>
-
-					<h2> Thanks For Registering </h2>
-					<p> Do some more HTML stuff here. </p>
+					<div class="registration-complete">
+						<h2> Thanks For Registering </h2>
+						<p> You can now login and contine with your journey. </p>
+					</div>
 
 					<?php } //endif ?>
 				

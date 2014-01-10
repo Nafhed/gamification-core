@@ -13,11 +13,15 @@
 ?>
 		<div id="main">
 			<div id="content">
-				<article id="post">
+				
+				<?php include('category_menu.php'); ?>
+
+				<article id="post-directory">
+
+				<div class="new_post"><a href="#" class="button"> + Create new post </a></div>
 					<?php $posts = $g->get_posts();
 
 					//echo print_r($posts, true);
-					include('category_menu.php');
 
 						foreach($posts as $post) {
 							//echo print_r($post, true);
@@ -34,10 +38,12 @@
 								//echo 'category ' . print_r($cat, true);
 							
 								//echo "<h1><a href='post.php?id=".$post['post_id'].">Post Title: " . $post['post_title'] . '</a></h1>';
-								echo "<div id='post-entry-".$post['post_id']." class='post-entry'>";
+								echo "<div id='post-entry-".$post['post_id']."' class='post-entry'>";
 									echo "<h1 class='post-title'><a href=post/".$post['post_slug'].">" . $post['post_title'] . "</a></h1>";
 									echo "<span class='post_date'>" . $postDate . "</span>";
-									echo "<div class='post_category'> Posted in <a href=category/" . $cat['category_slug'] . ">" . $cat['category_name'] . "</a></div>";
+									echo "<div class='post_category'> Posted in <a href=posts/category/" . $cat['category_slug'] . ">" . $cat['category_name'] . "</a></div>";
+									
+									// limit to certain amount of words with elipsis (...)
 									echo "<p>" . $post['post_content'] . "</p>";
 								echo "</div>";
 								}

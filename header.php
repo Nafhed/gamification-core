@@ -17,7 +17,7 @@ define('BASE_URL', '/DMP/Core/');
 	if(isset($_GET['op']) && ($_GET['op'] == 'logout')) {
 		$_SESSION = array();
 		session_destroy();
-		header('Location: index.php');
+		header('Location: /DMP/Core/index.php');
 		exit;
 	}
 
@@ -70,7 +70,6 @@ define('BASE_URL', '/DMP/Core/');
 	
 	<!-- JavaScript -->
 	<script type='text/javascript' src='<?php echo BASE_URL; ?>js/script.js'></script>
-	<script type='text/javascript' src='<?php echo BASE_URL; ?>js/leaderboard_update.js'></script>
 
 	<!-- This is an un-minified, complete version of Modernizr. 
 		 Before you move to production, you should generate a custom build that only has the detects you need.
@@ -84,8 +83,8 @@ define('BASE_URL', '/DMP/Core/');
 	<?php require_once('login_form.php'); ?>
 	
 	<hgroup>
-		<h1> <a href="<?php echo BASE_URL; ?>">Core</a> </h1>
-		<h6> Work hard. Play hard. </h6>
+		<h1> <a href="<?php echo BASE_URL; ?>">C <span id="logo"><img src="/DMP/Core/images/core-apple-icon.png" /></span> re</a> </h1>
+		<h6> Cooking with a twist. Fun with food. </h6>
 	</hgroup>
 
 	<?php include('navigation.php'); ?>

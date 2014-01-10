@@ -21,16 +21,16 @@ if(isset($_GET["sort"]))
 {
 	if(isset($_GET["desc"]))
 	{
-		$users = $g->get_users($_GET["sort"], true);
+		$users = $g->leaderboard($_GET["sort"], true);
 	}
 	else
 	{
-		$users = $g->get_users($_GET["sort"]);
+		$users = $g->leaderboard($_GET["sort"]);
 	}
 }
 else
 {
-	$users = $g->get_users();
+	$users = $g->leaderboard();
 }
 
 //echo print_r($users, true);
@@ -38,22 +38,24 @@ echo "<table id='leaderboard' border='0' cellpadding='5' cellspacing='5'>";
 echo "<tr><th>";
 if(isset($_GET["sort"]) && $_GET["sort"] == "playername" && !isset($_GET["desc"]))
 {
-	echo "<a href='?sort=username&desc=true'>username</a>";
+	echo "<a class='sort' href='?sort=username&desc=true'>username</a>";
 }
 else
 {
-	echo "<a href='?sort=username'>username</a>";
+	echo "<a class='sort' href='?sort=playername'>username</a>";
 }
 echo "</th><th>";
 if(isset($_GET["sort"]) && $_GET["sort"] == "experience" && !isset($_GET["desc"]))
 {
-	echo "<a href='?sort=experience&desc=true'>experience</a>";
+	echo "<a class='sort' href='?sort=experience&desc=true'>experience</a>";
 }
 else
 {
-	echo "<a href='?sort=experience'>experience</a>";
+	echo "<a class='sort' href='?sort=experience'>experience</a>";
 }
 //echo "</th><th>level</th><th>options</th></tr>";
+//print_r($_GET);
+
 foreach($users as $user)
 {
 	echo "<td id=".$user['ID'].">";
@@ -79,8 +81,8 @@ foreach($users as $user)
 		echo "<td class='user-info' colspan='4'>";
 		$info = $g->get_user($user["playername"]);
 		//echo print_r($info, true);
-		echo "<span>Info about ".$info["username"]."</span>";
-		echo "<p>Username: ".$info["username"]."</p>";
+		echo "<span>Information about ".$info["username"]."</span>";
+		//echo "<p>Username: ".$info["username"]."</p>";
 		echo "<p>Experience: ".$info["experience"]."</p>";
 		echo "<p>Level: ".$info["level"]."</p>";
 		echo "<p>Achievements: <ul>";

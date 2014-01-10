@@ -15,9 +15,10 @@ include("header.php");
 //$g = new gamify("localhost", "root", "root", "gamify");
 
 
-$g->debug();
-
 ?>
+<script type='text/javascript' src='<?php echo BASE_URL; ?>js/leaderboard_update.js'></script>
+
+<div id="loading"><img src="images/ajax-loading.gif" alt="ajax load animation" /></div>
 
 <section id="leaderboard-update" class="leaderboard">
 </section>

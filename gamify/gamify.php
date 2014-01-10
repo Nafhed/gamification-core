@@ -142,8 +142,9 @@ class gamify
 			{
 				$query->closeCursor();
 				$user = true;
+				$date = date('Y-m-d');
 				//$query = $this->con->prepare("INSERT INTO `".($this->pref)."user_stats` SET `username` = ?");
-				$query = $this->con->prepare("INSERT INTO `".($this->pref)."users` SET `username` = ?, `password` = ?, `email` = ?");
+				$query = $this->con->prepare("INSERT INTO `".($this->pref)."users` SET `username` = ?, `password` = ?, `email` = ?, `join_date` = '$date'");
 				$query->execute(array($username, $password, $email));
 				$query->closeCursor();
 			}
@@ -164,6 +165,9 @@ class gamify
 				$query->closeCursor();
 				return $person;
 				}
+			}
+			if(!$user) {
+				$this->err[] = 'This user already exists, please choose a different username';
 			}
 		}
 		catch(PDOException $e) {
@@ -192,7 +196,7 @@ class gamify
 			}
 			else
 			{
-				$this->err[] = 'The user '. $username . ' doesnt exist';
+				$this->err[] = 'Sorry, please check your details';
 			}
 		}
 		catch(PDOException $e) {
@@ -225,14 +229,14 @@ class gamify
 			}
 			else
 			{
-				$this->err[] = 'There are no user with username '. $username;
+				$this->err[] = 'There is no user with username '. $username;
 			}
 		}
 		catch(PDOException $e) {
 			$this->err[] = 'Error : '.$e->getMessage();
 		}
 	}
-	//get many user informations
+	//get multiple user information
 	public function get_users($ord = "", $desc = false, $limit = 0){
 		$add = "";
 		if(in_array($ord, array("username", "experience")))
@@ -251,6 +255,41 @@ class gamify
 		try{
 			//$query = $this->con->prepare("SELECT a.ID, a.username, a.experience, b.level_name as level FROM `".($this->pref)."user_stats` as a,`".($this->pref)."levels` as b WHERE a.level = b.ID".$add);
 			$query = $this->con->prepare("SELECT player_stats.ID, player_stats.playername, player_stats.experience, player_level.level_name as level FROM `".($this->pref)."user_stats` as player_stats,`".($this->pref)."levels` as player_level WHERE player_stats.level = player_level.ID".$add);
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			$query->execute();
+			if($result = $query->fetchAll())
+			{
+				$query->closeCursor();
+				return $result;
+			}
+			else
+			{
+				$this->err[] = 'There are no users';
+			}
+		}
+		catch(PDOException $e) {
+			$this->err[] = 'Error : '.$e->getMessage();
+		}
+	}
+	public function leaderboard($ord = "", $desc = false, $limit = 0){
+		$add = "";
+		if(in_array($ord, array("username", "experience")))
+		{
+			$add .= " ORDER BY ".$ord;
+			if($desc)
+			{
+				$add .= " DESC";
+			}
+		}
+		$limit = intval($limit);
+		if($limit > 0)
+		{
+			$add .= " LIMIT ".$limit;
+		}
+		try{
+			//$query = $this->con->prepare("SELECT a.ID, a.username, a.experience, b.level_name as level FROM `".($this->pref)."user_stats` as a,`".($this->pref)."levels` as b WHERE a.level = b.ID".$add);
+			$query = $this->con->prepare("SELECT player_stats.ID, player_stats.playername, player_stats.experience, player_level.level_name as level FROM `".($this->pref)."user_stats` as player_stats,`".($this->pref)."levels` as player_level WHERE player_stats.level = player_level.ID AND player_stats.last_updated > DATE_ADD(CURRENT_TIMESTAMP, INTERVAL -1 MONTH) ".$add);
+			//print_r($query);
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			$query->execute();
 			if($result = $query->fetchAll())
@@ -322,6 +361,26 @@ class gamify
 	public function get_level($id){
 		try{
 			$query = $this->con->prepare("SELECT * FROM `".($this->pref)."levels` WHERE `ID` = ?");
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			$query->execute(array($id));
+			if($result = $query->fetch())
+			{
+				$query->closeCursor();
+				return $result;
+			}
+			else
+			{
+				$this->err[] = 'There are no level with ID '.$id;
+			}
+		}
+		catch(PDOException $e) {
+			$this->err[] = 'Error : '.$e->getMessage();
+		}
+	}
+	// get the next level
+	public function get_next_level($id){
+		try{
+			$query = $this->con->prepare("SELECT * FROM `".($this->pref)."levels` WHERE `ID` > ? LIMIT 1");
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			$query->execute(array($id));
 			if($result = $query->fetch())
@@ -537,9 +596,9 @@ class gamify
 	/**************************
 	* POST DIRECTORY
 	**************************/
+	//get recipe information
 	public function get_posts() {
 		try{
-			//get post details from database
 			$query = $this->con->prepare("SELECT post_id, post_slug, post_title, post_content, post_date FROM `".($this->pref)."posts` ORDER BY post_id DESC");
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			//$query->execute(array($id));
@@ -559,22 +618,16 @@ class gamify
 		}
 	}
 
+	//view individual post
 	public function view_post($slug) {
 		try {
 			$query = $this->con->prepare("SELECT post_id, post_title, post_content, post_date, post_experience FROM `".($this->pref)."posts` WHERE `post_slug` = ?");
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			$query->execute(array($slug));
-			//$row = $query->fetch();
-			//echo 'post array - ' . print_r($row, true);
-			//$query->execute(array($id));
-			//$query->closeCursor;
 
 			if($result = $query->fetch()) {
 				
 				$query->closeCursor;
-				//$query = $this->con->prepare("SELECT post_id, post_title, post_content, post_date FROM `".($this->pref)."posts` WHERE `post_slug` = ?");
-				//$query->execute(array($result['post_id']));
-				//echo print_r($result, true);
 				return $result;
 				
 			}
@@ -585,13 +638,13 @@ class gamify
 			}
 		}
 		catch(PDOException $e) {
-			$this->error= 'Error no posts'.$e->getMessage();
+			$this->error = 'Error no posts'.$e->getMessage();
 		}
 	}
 
 	public function post_category($post_id) {
 		try {
-			$query = $this->con->prepare("SELECT post_category.category_id, category_name FROM `".($this->pref)."posts_category` as post_category, `".($this->pref)."posts_directory` as post_directory WHERE post_category.category_id = post_directory.category_id AND post_directory.post_id = ? ");
+			$query = $this->con->prepare("SELECT post_category.category_id, category_slug, category_name FROM `".($this->pref)."posts_category` as post_category, `".($this->pref)."posts_directory` as post_directory WHERE post_category.category_id = post_directory.category_id AND post_directory.post_id = ? ");
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			$query->execute(array($post_id));
 
@@ -606,7 +659,7 @@ class gamify
 			}
 		}
 		catch(PDOException $e) {
-			$this->error= 'Error no posts'.$e->getMessage();
+			$this->err[] = 'Error no posts'.$e->getMessage();
 		}
 	}
 
@@ -621,6 +674,7 @@ class gamify
 		}
 	}
 
+	//get list of all categories for menu
 	public function get_categories() {
 		$query = $this->con->prepare("SELECT * FROM `".($this->pref)."posts_category`");
 		$query->setFetchMode(PDO::FETCH_ASSOC);
@@ -632,6 +686,7 @@ class gamify
 		}
 	}
 
+	//view posts based on their category
 	public function category_posts($cat) {
 		try {
 			$query = $this->con->prepare("SELECT post.post_id, post.post_title, post.post_slug, post.post_content, post.post_date FROM `".($this->pref)."posts` as post, `".($this->pref)."posts_directory` as post_directory WHERE post.post_id = post_directory.post_id AND post_directory.category_id = ? ORDER BY post.post_id DESC");
@@ -647,6 +702,40 @@ class gamify
 			$this->error= 'Error no posts'.$e->getMessage();
 		}
 	}
+
+	//complete a recipe marking as complete
+	public function complete_recipe($userID, $postID) {
+		try {
+			$query = $this->con->prepare("SELECT userID, post_id FROM `".($this->pref)."user_posts` WHERE `userID` = ? AND `post_id` = ?");
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			$query->execute(array($userID, $postID));
+
+				# if user hasn't completed this post
+				if(!$query->fetch()) {
+					
+					//$query->closeCursor();
+					//insert into gamify_user_posts table
+					//$query = $this->con->prepare("INSERT INTO `".($this->pref)."user_posts` SET `userID` = ? AND `post_id` = ?");
+										//insert into gamify_user_posts table
+					$query = $this->con->prepare("INSERT INTO `".($this->pref)."user_posts` (`userID`, `post_id`) VALUES (?, ?)");
+					//echo print_r($result, true);
+
+					$query->execute(array($userID, $postID));
+					//$query->execute(array($result['userID'], $result['post_id']));
+					$query->closeCursor();
+				}
+				else
+				{
+					# user has complete the post
+					$this->err[] = 'You have already completed this post.';
+				}
+			//}
+		}
+		catch(PDOException $e) {
+			$this->err[] = 'Error '.$e->getMessage();
+		}
+	}
+
 	/**************************
 	* USER INTERACTION
 	**************************/
@@ -658,6 +747,8 @@ class gamify
 			$query = $this->con->prepare("SELECT * FROM `".($this->pref)."users` WHERE `username` = ?");		
 			$query->setFetchMode(PDO::FETCH_ASSOC);
 			$query->execute(array($username));
+			//get current date
+			$date = date('Y-m-d G-i-s');
 			if($row = $query->fetch())
 			{
 				$query->closeCursor();
@@ -673,7 +764,7 @@ class gamify
 					//update experience and level info
 
 					// ID to userID
-					$query = $this->con->prepare("UPDATE `".($this->pref)."user_stats` SET `experience` = ?, `level` = ? WHERE `userID` = ?");
+					$query = $this->con->prepare("UPDATE `".($this->pref)."user_stats` SET `experience` = ?, `level` = ?, `last_updated` = '$date' WHERE `userID` = ?");
 					$query->execute(array($exp, $level["ID"], $row["userID"]));
 					$query->closeCursor();
 					return $level;
@@ -684,7 +775,7 @@ class gamify
 					//update experience info
 
 					// ID to userID
-					$query = $this->con->prepare("UPDATE `".($this->pref)."user_stats` SET `experience` = ? WHERE `userID` = ?");
+					$query = $this->con->prepare("UPDATE `".($this->pref)."user_stats` SET `experience` = ?, `last_updated` = '$date' WHERE `userID` = ?");
 					$query->execute(array($exp, $row["userID"]));
 					$query->closeCursor();
 				}
@@ -701,6 +792,101 @@ class gamify
 		}
 		return false;
 	}
+
+
+	public function check_achievement($player){
+		//Achievement: First post
+		try {
+				$query = $this->con->prepare("SELECT * FROM `".($this->pref)."user_posts` WHERE userID = ?");
+				$query->setFetchMode(PDO::FETCH_ASSOC);
+				$query->execute(array($player));
+				if($result = !$query->fetch())
+				{
+					$query->closeCursor();
+					$query = $this->con->prepare("SELECT * FROM `".($this->pref)."achievements` WHERE `ID` = 5");
+					$query->setFetchMode(PDO::FETCH_ASSOC);
+					$query->execute();
+					if($ach = $query->fetch())
+					{
+						$query->closeCursor();
+						return $ach;
+					}
+				}
+			}
+		catch(PDOException $e) {
+			$this->err[] = 'Error : '.$e->getMessage();
+		}
+
+		//Achievement:
+		try {
+				$query = $this->con->prepare("SELECT * FROM `".($this->pref)."user_posts` as user_posts, `".($this->pref)."posts_directory` as post_directory WHERE user_posts.userID = ? AND post_directory.category_id = 4");
+				$query->setFetchMode(PDO::FETCH_ASSOC);
+				$query->execute(array($player));
+
+				if($result = $query->fetch())
+				{
+					$query->closeCursor();
+					$query = $this->con->prepare("SELECT * FROM `".($this->pref)."achievements` WHERE `ID` = 6");
+					$query->setFetchMode(PDO::FETCH_ASSOC);
+					$query->execute();
+					if($ach = $query->fetch())
+					{
+						$query->closeCursor();
+						return $ach;
+					}
+				}
+		}
+		catch(PDOException $e) {
+			$this->err[] = 'Error : '.$e->getMessage();
+		}
+	}
+
+	//check achievement criteria
+	/*public function check_achievement() {
+		try{
+			$query = $this->con->prepare("SELECT * FROM `".($this->pref)."user_posts`");
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			$query->execute();
+			//$query->execute();
+			if($ach = $query->fetchAll()) {
+				$query->closeCursor();
+				return $ach;
+			}
+			else 
+			{
+				//throw an error
+				$this->err[] = 'Error post unavailable';
+			}
+		}
+		catch(PDOException $e) {
+			$this->err[] = 'Error'.$e->getMessage();
+		}
+	}
+	public function check_achievement($player) {
+		try{
+			# complete first post achievement
+			$query = $this->con->prepare("SELECT userID FROM `".($this->pref)."user_posts` WHERE `userID` = ?");
+			$query->setFetchMode(PDO::FETCH_ASSOC);
+			$query->execute(array($player));
+			$query->fetchAll();
+			if($row = !$query->fetch()) {
+				echo 'testing';
+					//$query->closeCursor();
+					$query = $this->con->prepare("SELECT * FROM `".($this->pref)."achievements` WHERE `ID` = ?");
+					$query->setFetchMode(PDO::FETCH_ASSOC);
+					$query->execute(array('5'));
+					$query->fetch();
+					$query->closeCursor();
+					return $row;
+				} else {
+				$this->err[] = 'This post has been completed';
+			}
+		}
+		catch(PDOException $e) {
+			$this->err[] = 'Error : '.$e->getMessage();
+		}
+	}*/
+
 	//times of completed actions for achievements
 	public function action($username, $achievement, $amount = 1){
 		try{
